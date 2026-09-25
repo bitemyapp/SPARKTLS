@@ -1,3 +1,4 @@
+with SPARKTLS.Send_Ciphertext;
 --  TLS Static File Server using epoll (async I/O)
 --
 --  A real, working HTTPS server built on SPARKTLS that serves static
@@ -337,8 +338,6 @@ procedure TLS_Web_Epoll is
       end if;
       Conn.State := Closed;
       Conn.Body_Ref := null;
-      Conn.Out_Len := 0;
-      Conn.Out_Sent := 0;
       Conn.Close_Queued := False;
       Conn.Want_Out := False;
       SPARKTLS.Drop (Conn.S);
@@ -391,36 +390,33 @@ procedure TLS_Web_Epoll is
    --  before 2026-09-14.
    procedure Pump_Send (Idx : Conn_Index) is
       Conn    : Connection renames Conns (Idx);
-      Written : N32;
+      Written, Sent : N32;
+      Wr : long := 0;
+      procedure Send (Data : in SPARKTLS.RBT_A.Bytes; Count : out N32) is
+      begin
+         Wr := C_Write (Conn.FD, Data (Data'First)'Address, size_t (Data'Length));
+         Count := (if Wr > 0 then N32 (Wr) else 0);
+      end Send;
+      procedure Send_Output is new SPARKTLS.Send_Ciphertext (Send);
    begin
       loop
-         if Conn.Out_Sent < Conn.Out_Len then
-            declare
-               Wr : constant long :=
-                 C_Write (Conn.FD, Conn.Out_Buf (Conn.Out_Sent)'Address,
-                          size_t (Conn.Out_Len - Conn.Out_Sent));
-            begin
-               if Wr > 0 then
-                  Conn.Out_Sent := Conn.Out_Sent + N32 (Wr);
-                  Conn.Last_Activity := Ada.Real_Time.Clock;
-               elsif Wr < 0 and then GNAT.OS_Lib.Errno = EAGAIN then
-                  Arm_Output (Idx, True);
-                  return;
-               else
-                  Conn.State := Closed;   --  EPIPE, reset, ...
-                  return;
-               end if;
-               if Conn.Out_Sent < Conn.Out_Len then
-                  Arm_Output (Idx, True);
-                  return;
-               end if;
-            end;
+         if SPARKTLS.Output_Pending (Conn.S) > 0 then
+            Send_Output (Conn.S, Sent);
+            if Sent > 0 then
+               Conn.Last_Activity := Ada.Real_Time.Clock;
+            elsif Wr < 0 and then GNAT.OS_Lib.Errno = EAGAIN then
+               Arm_Output (Idx, True);
+               return;
+            else
+               Conn.State := Closed;
+               return;
+            end if;
+            if SPARKTLS.Output_Pending (Conn.S) > 0 then
+               Arm_Output (Idx, True);
+               return;
+            end if;
          end if;
-         Conn.Out_Len := 0;
-         Conn.Out_Sent := 0;
-
-         SPARKTLS.Drain_Ciphertext (Conn.S, Conn.Out_Buf, Conn.Out_Len);
-         if Conn.Out_Len = 0 then
+         if SPARKTLS.Output_Pending (Conn.S) = 0 then
             if Conn.State = Sending and then Conn.Body_Ref /= null
               and then Conn.Body_Off < N32 (Conn.Body_Ref'Length)
             then
@@ -806,8 +802,6 @@ begin
                         --  connection's unsent bytes or body reference.
                         Conns (Conn_Index (Slot)).Body_Ref := null;
                         Conns (Conn_Index (Slot)).Body_Off := 0;
-                        Conns (Conn_Index (Slot)).Out_Len := 0;
-                        Conns (Conn_Index (Slot)).Out_Sent := 0;
                         Conns (Conn_Index (Slot)).Close_Queued := False;
                         Conns (Conn_Index (Slot)).Want_Out := False;
                         Conns (Conn_Index (Slot)).S :=

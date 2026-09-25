@@ -13,8 +13,6 @@ with SPARKTLS;
 
 package TLS_Echo_Pool is
 
-   use type SPARKNaCl.N32;
-
    type Conn_State is (Handshaking, Ready, Sending, Closing, Closed);
 
    type Body_Access is access all Byte_Seq;
@@ -30,18 +28,11 @@ package TLS_Echo_Pool is
       Opened_At     : Ada.Real_Time.Time := Ada.Real_Time.Time_First;
       Last_Activity : Ada.Real_Time.Time := Ada.Real_Time.Time_First;
       --  Response in flight (tls_web_epoll): the body by reference and how
-      --  much of it has been handed to the session; ciphertext the socket
-      --  has not accepted yet; whether close_notify has been queued; and
-      --  whether EPOLLOUT is armed. Non-blocking write(2) may take part of
-      --  a buffer, so the remainder waits here for the socket to drain.
+      --  much of it has been handed to the session; whether close_notify
+      --  has been queued; and whether EPOLLOUT is armed. Unsent ciphertext
+      --  remains in the session until the socket accepts it.
       Body_Ref     : Body_Access := null;
       Body_Off     : N32 := 0;
-      --  Drain the complete TLS output queue in one socket write when
-      --  possible. Out_Sent still retains any short-write remainder.
-      Out_Buf      : Byte_Seq (0 .. SPARKTLS.Buffer_Size'Last - 1) :=
-                       (others => 0);
-      Out_Len      : N32 := 0;
-      Out_Sent     : N32 := 0;
       Close_Queued : Boolean := False;
       Want_Out     : Boolean := False;
    end record;
