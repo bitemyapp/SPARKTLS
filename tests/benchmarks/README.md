@@ -173,3 +173,10 @@ resolution; `-s` alone only tracks compiler-switch changes.
 Source fingerprints include the sibling dependencies and generated configuration,
 and are recorded after the build. Source copies inside another Git checkout are
 marked as copies instead of attributing the enclosing checkout's HEAD to them.
+
+Linux network samples also record server user+system CPU seconds and CPU
+microseconds per connection. These bracket the timed client command and exclude
+startup/preflight and child-process CPU. Accounting has the kernel clock-tick
+resolution; average across many connections. Missing counters are omitted, not
+reported as zero. This helps separate server work from client/connection costs;
+it does not measure concurrent-client capacity.

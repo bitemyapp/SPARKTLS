@@ -184,3 +184,13 @@ must preserve partial-write handling and buffer lifetimes. Kernel `write` sample
 include kernel work, so they are not evidence that a single Ada routine is slow.
 Ed25519 fixed-base tables remain another measured target. No gains from those
 unimplemented candidates are included above.
+
+## Correction: Ed25519 helper measurements
+
+The Ed25519 rows and Ed25519 native timing statistic in this historical report
+are withdrawn. The field25519 benchmark and timing helper allocated a 64-byte
+signed-message buffer for a 32-byte message; Sign requires 96 bytes. This
+violated the API precondition. The helpers are corrected and subsequent
+optimization rounds must collect a fresh baseline. The field arithmetic,
+X25519, separate secret-taint tests and full TLS application measurements are
+unaffected by this helper error.

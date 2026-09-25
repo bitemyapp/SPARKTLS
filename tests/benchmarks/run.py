@@ -99,6 +99,19 @@ def order_for(iteration, names):
     return names if (iteration // len(names)) % 2 == 0 else names[::-1]
 
 
+def process_cpu_seconds(pid):
+    """Linux process user+system CPU, excluding child processes; None elsewhere."""
+    if platform.system() != "Linux":
+        return None
+    # comm (field 2) may contain spaces and closing parentheses.
+    try:
+        stat = Path(f"/proc/{pid}/stat").read_text()
+    except OSError:
+        return None
+    fields = stat.rsplit(")", 1)[1].split()
+    return (int(fields[11]) + int(fields[12])) / os.sysconf("SC_CLK_TCK")
+
+
 class Server:
     """Only signal the process group this runner created."""
     def __init__(self, command, cwd, env, log):
@@ -378,7 +391,9 @@ def network(args, out, fixture, binaries, scenario, suite):
                            "-verify", "3", "-reuse" if bulk else "-new", "-time", str(args.seconds)]
                 if bulk:
                     command += ["-www", "/payload.bin"]
+                cpu_before = process_cpu_seconds(server.process.pid)
                 result = execute(command, env=env, timeout=args.seconds + 60)
+                cpu_after = process_cpu_seconds(server.process.pid)
                 row = result | {"implementation": name, "scenario": scenario, "suite": suite,
                                 "iteration": iteration, "timestamp_unix": time.time(),
                                 "load_average": os.getloadavg(), "server_command": server.command,
@@ -388,6 +403,10 @@ def network(args, out, fixture, binaries, scenario, suite):
                     if server.process.poll() is not None:
                         raise RuntimeError("Server exited during measurement")
                     row["rate"] = row["connections"] / row["seconds"] * (args.size / 2**20 if bulk else 1)
+                    if cpu_before is not None and cpu_after is not None:
+                        row["server_cpu_seconds"] = cpu_after - cpu_before
+                        row["server_cpu_us_per_connection"] = (
+                            row["server_cpu_seconds"] * 1e6 / row["connections"])
                 except RuntimeError as error:
                     record(out, row | {"error": str(error)})
                     raise
