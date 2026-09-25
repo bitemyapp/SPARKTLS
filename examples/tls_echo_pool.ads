@@ -13,6 +13,8 @@ with SPARKTLS;
 
 package TLS_Echo_Pool is
 
+   use type SPARKNaCl.N32;
+
    type Conn_State is (Handshaking, Ready, Sending, Closing, Closed);
 
    type Body_Access is access all Byte_Seq;
@@ -34,7 +36,10 @@ package TLS_Echo_Pool is
       --  a buffer, so the remainder waits here for the socket to drain.
       Body_Ref     : Body_Access := null;
       Body_Off     : N32 := 0;
-      Out_Buf      : Byte_Seq (0 .. 16639) := (others => 0);
+      --  Drain the complete TLS output queue in one socket write when
+      --  possible. Out_Sent still retains any short-write remainder.
+      Out_Buf      : Byte_Seq (0 .. SPARKTLS.Buffer_Size'Last - 1) :=
+                       (others => 0);
       Out_Len      : N32 := 0;
       Out_Sent     : N32 := 0;
       Close_Queued : Boolean := False;
