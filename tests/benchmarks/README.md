@@ -180,3 +180,10 @@ startup/preflight and child-process CPU. Accounting has the kernel clock-tick
 resolution; average across many connections. Missing counters are omitted, not
 reported as zero. This helps separate server work from client/connection costs;
 it does not measure concurrent-client capacity.
+
+## Latest optimization measurements
+
+- [Output batching and direct ciphertext sending](PERFORMANCE_OUTPUT_2026-09-25.md)
+- [Fixed-base curves and the combined comparison with OpenSSL and rustls](PERFORMANCE_FIXED_BASE_2026-09-25.md)
+
+These reports retain before/after data, correctness checks and host-noise limits.
