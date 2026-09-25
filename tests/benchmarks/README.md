@@ -6,7 +6,8 @@ These are application benchmarks, not isolated crypto primitives or a test of
 multicore server capacity.
 
 See [the Linux measurements and optimization report](PERFORMANCE_2026-09-24.md)
-for the prepared AES-GCM results and remaining bottlenecks.
+for the prepared AES-GCM results. The [follow-up report](PERFORMANCE_FOLLOWUP_2026-09-24.md)
+covers Curve25519 arithmetic and the record-copy experiment.
 
 ## Running
 
