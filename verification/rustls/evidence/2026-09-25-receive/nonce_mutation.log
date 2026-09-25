@@ -1,0 +1,87 @@
+Command: ['/home/callen/work/sparktls-perf-2026-09-24/tools/kani/bin/cargo-kani', 'kani', '--lib', '--no-default-features', '--features', 'std', '--output-format', 'terse', '-Z', 'unstable-options', '--harness-timeout', '180s', '--manifest-path', '/home/callen/work/sparktls-perf-2026-09-24/kani-port-artifacts/receive-final/nonce_mutation-mutant/Cargo.toml', '--harness', 'kani_proofs::nonce_matches_spark_xor_encoding', '--exact', '--export-json', '/home/callen/work/sparktls-perf-2026-09-24/kani-port-artifacts/receive-final/nonce_mutation.json']
+Kani Rust Verifier 0.68.0 (cargo plugin)
+CBMC 6.11.0
+   Compiling zeroize v1.8.2
+   Compiling untrusted v0.9.0
+   Compiling rustls v0.23.45 (/home/callen/work/sparktls-perf-2026-09-24/kani-port-artifacts/receive-final/nonce_mutation-mutant)
+   Compiling subtle v2.6.1
+warning: use of an unstable feature
+ --> <crate attribute>:1:12
+  |
+1 | #![feature(register_tool)]
+  |            ^^^^^^^^^^^^^
+  |
+  = note: requested on the command line with `--force-warn unstable-features`
+
+   Compiling once_cell v1.21.4
+warning: use of an unstable feature
+ --> <crate attribute>:1:12
+  |
+1 | #![feature(register_tool)]
+  |            ^^^^^^^^^^^^^
+  |
+  = note: requested on the command line with `--force-warn unstable-features`
+
+warning: use of an unstable feature
+ --> <crate attribute>:1:12
+  |
+1 | #![feature(register_tool)]
+  |            ^^^^^^^^^^^^^
+  |
+  = note: requested on the command line with `--force-warn unstable-features`
+
+   Compiling rustls-pki-types v1.15.1
+warning: use of an unstable feature
+ --> <crate attribute>:1:12
+  |
+1 | #![feature(register_tool)]
+  |            ^^^^^^^^^^^^^
+  |
+  = note: requested on the command line with `--force-warn unstable-features`
+
+warning: use of an unstable feature
+ --> <crate attribute>:1:12
+  |
+1 | #![feature(register_tool)]
+  |            ^^^^^^^^^^^^^
+  |
+  = note: requested on the command line with `--force-warn unstable-features`
+
+   Compiling rustls-webpki v0.103.15
+warning: use of an unstable feature
+ --> <crate attribute>:1:12
+  |
+1 | #![feature(register_tool)]
+  |            ^^^^^^^^^^^^^
+  |
+  = note: requested on the command line with `--force-warn unstable-features`
+
+warning: use of an unstable feature
+ --> <crate attribute>:1:12
+  |
+1 | #![feature(register_tool)]
+  |            ^^^^^^^^^^^^^
+  |
+  = note: requested on the command line with `--force-warn unstable-features`
+
+warning: Found the following unsupported constructs:
+             - caller_location (1)
+             - foreign function (1)
+         
+         Verification will fail if one or more of these constructs is reachable.
+         See https://model-checking.github.io/kani/rust-feature-support.html for more details.
+
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.30s
+Checking harness kani_proofs::nonce_matches_spark_xor_encoding...
+
+VERIFICATION RESULT:
+ ** 1 of 171 failed (4 unreachable)
+Failed Checks: nonce differs from SPARK IV XOR counter encoding
+ File: "src/kani_proofs.rs", line 20, in kani_proofs::nonce_matches_spark_xor_encoding
+
+VERIFICATION:- FAILED
+Verification Time: 0.7709898s
+
+Manual Harness Summary:
+Verification failed for - kani_proofs::nonce_matches_spark_xor_encoding
+Complete - 0 successfully verified harnesses, 1 failures, 1 total.

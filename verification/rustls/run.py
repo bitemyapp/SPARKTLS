@@ -9,7 +9,6 @@ from pathlib import Path
 import shutil
 import signal
 import subprocess
-import sys
 import time
 
 from verify_vendor import ROOT, VENDOR, verify
@@ -23,6 +22,20 @@ def digest(path):
 
 def save(path, value):
     path.write_text(json.dumps(value, indent=2) + "\n")
+
+
+def proof_source_hashes():
+    paths = [p for p in VENDOR.rglob("*")
+             if p.is_file() and "target" not in p.relative_to(VENDOR).parts]
+    paths += [HERE / name for name in (
+        "contracts.json", "run.py", "verify_vendor.py", "KANI_VERSION",
+        "spark-reference.json",
+    )]
+    paths += [ROOT / name for name in (
+        "ci/rustls_kani.sh", "third_party/rustls-provenance.json",
+        "third_party/rustls-upstream-sha256.json",
+    )]
+    return {str(p.relative_to(ROOT)): digest(p) for p in sorted(paths)}
 
 
 def execute(command, log, env, timeout=1200):
@@ -80,6 +93,22 @@ def control_failed_as_expected(path, rc, failure_kind):
             "failed_checks": [c["description"] for c in failed]}
 
 
+def mutation_control(common, env, out, *, name, harness, file, old, new,
+                     occurrences, expected_failure):
+    mutant = out / (name + "-mutant")
+    shutil.copytree(VENDOR, mutant, ignore=shutil.ignore_patterns("target"))
+    source_path = mutant / file
+    source = source_path.read_text()
+    if source.count(old) != occurrences:
+        raise RuntimeError(f"Implementation changed; review {name} mutation control")
+    source_path.write_text(source.replace(old, new, 1))
+    report = out / (name + ".json")
+    rc = execute(common + ["--manifest-path", str(mutant / "Cargo.toml"),
+                 "--harness", harness, "--exact", "--export-json", str(report)],
+                 out / (name + ".log"), env)
+    return control_failed_as_expected(report, rc, expected_failure)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, help="New result directory; never overwritten")
@@ -105,6 +134,7 @@ def main():
         env = os.environ.copy()
         env.setdefault("CARGO_BUILD_JOBS", "4")
         contracts = json.loads((HERE / "contracts.json").read_text())
+        input_hashes = proof_source_hashes()
         lock_hash = digest(VENDOR / "Cargo.lock")
         # Kani 0.68 has no --locked flag. Check Cargo's lock first and reject
         # any change afterward instead of silently accepting a new resolution.
@@ -125,36 +155,54 @@ def main():
         validate_positive(report, rows, contracts)
         controls = {}
         if args.self_test:
-            harness = "kani_proofs::nonce_matches_spark_xor_encoding"
-            mutant = out / "nonce-mutant"
-            shutil.copytree(VENDOR, mutant, ignore=shutil.ignore_patterns("target"))
-            cipher = mutant / "src/crypto/cipher.rs"
-            original = "let mut seq_bytes = [0u8; NONCE_LEN];"
-            source = cipher.read_text()
-            if source.count(original) != 2:
-                raise RuntimeError("Nonce implementation changed; review mutation control")
-            cipher.write_text(source.replace(original, "let mut seq_bytes = [1u8; NONCE_LEN];", 1))
-            control_args = ["--harness", harness, "--exact"]
-            rc = execute(common + ["--manifest-path", str(mutant / "Cargo.toml"),
-                         "--export-json", str(out / "mutation.json")] + control_args,
-                         out / "mutation.log", env)
-            controls["nonce_mutation"] = control_failed_as_expected(out / "mutation.json", rc, "nonce differs from spark")
-            rc = execute(common + ["--manifest-path", str(VENDOR / "Cargo.toml"), "--unwind", "1",
-                         "--export-json", str(out / "unwind.json")] + control_args,
+            mutations = [
+                dict(
+                    name="nonce_mutation",
+                    harness="kani_proofs::nonce_matches_spark_xor_encoding",
+                    file="src/crypto/cipher.rs",
+                    old="let mut seq_bytes = [0u8; NONCE_LEN];",
+                    new="let mut seq_bytes = [1u8; NONCE_LEN];",
+                    occurrences=2,
+                    expected_failure="nonce differs from spark",
+                ),
+                dict(
+                    name="receive_counter_mutation",
+                    harness="record_layer::kani_proofs::incoming_success_advances_once_and_preserves_plaintext",
+                    file="src/record_layer.rs",
+                    old="self.read_seq += 1;",
+                    new="self.read_seq += 0;",
+                    occurrences=1,
+                    expected_failure="successful receive advances sequence once",
+                ),
+                dict(
+                    name="inner_type_mutation",
+                    harness="kani_proofs::tls13_unpadding_preserves_content_and_extracts_last_nonzero_type",
+                    file="src/msgs/message/inbound.rs",
+                    old="Some(content_type) => return ContentType::from(content_type),",
+                    new="Some(_content_type) => return ContentType::ApplicationData,",
+                    occurrences=1,
+                    expected_failure="tls inner content type equals the last nonzero byte",
+                ),
+            ]
+            for mutation in mutations:
+                controls[mutation["name"]] = mutation_control(common, env, out, **mutation)
+            rc = execute(common + ["--manifest-path", str(VENDOR / "Cargo.toml"),
+                         "--harness", "kani_proofs::nonce_matches_spark_xor_encoding", "--exact",
+                         "--unwind", "1", "--export-json", str(out / "unwind.json")],
                          out / "unwind.log", env)
             controls["insufficient_unwind"] = control_failed_as_expected(out / "unwind.json", rc, "unwind")
-            print("Both negative controls failed for their expected reasons.", flush=True)
+            print("All four negative controls failed for their expected reasons.", flush=True)
         verify()
         if digest(VENDOR / "Cargo.lock") != lock_hash:
             raise RuntimeError("A control changed the pinned dependency lockfile")
-        source_files = [p for p in VENDOR.rglob("*") if p.is_file() and "target" not in p.relative_to(VENDOR).parts]
-        source_files += [p for p in HERE.iterdir() if p.is_file()]
+        if proof_source_hashes() != input_hashes:
+            raise RuntimeError("Proof inputs changed during verification")
         summary = {
             "complete": True, "utc": dt.datetime.now(dt.timezone.utc).isoformat(),
             "seconds": time.monotonic() - started, "tools": report["tools"],
             "target": report["metadata"]["target"], "features": ["std"], "default_features": False,
             "upstream_files_verified": upstream_files, "command": command,
-            "source_sha256": {str(p.relative_to(ROOT)): digest(p) for p in sorted(source_files)},
+            "source_sha256": input_hashes,
             "controls": controls,
             "contracts": [c | {"status": "verified", "duration_ms": next(r["duration_ms"] for r in rows if r["harness_id"] == c["harness"])} for c in contracts],
         }

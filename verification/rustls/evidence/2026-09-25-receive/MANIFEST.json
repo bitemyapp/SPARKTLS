@@ -1,0 +1,32 @@
+{
+  "kani.json": {
+    "raw_sha256": "810ece9cd06954341cb8046e60666e84db673225ae7bdc390dc320008829d8a2",
+    "gzip_sha256": "9ceb20b2b93b057c42d121253a08723aac738f8bd6d71e0ac43d949fd04cb9bb",
+    "raw_bytes": 4577749,
+    "gzip_bytes": 133791
+  },
+  "nonce_mutation.json": {
+    "raw_sha256": "281265fc8af269a24f2d84803c45e49bd032a53c6d91ab5c2a2ce8181a49471a",
+    "gzip_sha256": "5dc0b2dfa64cd6afffe4bd6a55151a5d794087a593a814735a5cf35f12d026c1",
+    "raw_bytes": 93858,
+    "gzip_bytes": 4869
+  },
+  "receive_counter_mutation.json": {
+    "raw_sha256": "b211e6d04e8324f534ea6c939430082d75b13e83c9244a8fde71994e8c50b62b",
+    "gzip_sha256": "960f72068e9a02299a3c1c0a1f56ce40f1ae61c120068bbd7c48539df396c75b",
+    "raw_bytes": 470993,
+    "gzip_bytes": 13606
+  },
+  "inner_type_mutation.json": {
+    "raw_sha256": "e6b0cd21b29e65af603fcaedacf778510583b9a00ecdb1d1111a310b7aef13b0",
+    "gzip_sha256": "18902e66bfb2bb37a3d81839b41889c0b9f2224ceeaba2b8dce283ac651bc1d8",
+    "raw_bytes": 363499,
+    "gzip_bytes": 11426
+  },
+  "unwind.json": {
+    "raw_sha256": "0f3ee8ea08d911b75ef3495dc84d29d357273d90f113fe659ccaf3aa856611cb",
+    "gzip_sha256": "4f091bdc7eefdd23cb6467cef541c0cf0d469b632715907b6e9adbf29373cab2",
+    "raw_bytes": 95370,
+    "gzip_bytes": 4949
+  }
+}

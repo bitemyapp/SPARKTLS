@@ -89,5 +89,54 @@
     "spark_source": "src/sparktls-records.adb: Make_Nonce / Build_Encrypted_Record",
     "mapping": "Rustls lifecycle lemma needed alongside nonce uniqueness",
     "domain": "All previous u64 read/write counters and all u64 requested limits; unwind 8"
+  },
+  {
+    "id": "RECV-STEP",
+    "harness": "record_layer::kani_proofs::incoming_success_advances_once_and_preserves_plaintext",
+    "spark_source": "src/sparktls-records.ads: Decrypt_Record Post",
+    "mapping": "Transferred one-step counter and frame obligation, conditional on a successful provider and non-exhausted receive counter",
+    "domain": "All u64 read sequences below MAX, all write sequences, all prior flags/trial budgets, arbitrary 0..16-byte plaintext/type/version; unwind 19"
+  },
+  {
+    "id": "RECV-FAIL",
+    "harness": "record_layer::kani_proofs::incoming_failure_preserves_sequence_and_obeys_trial_budget",
+    "spark_source": "src/sparktls-records.ads: Decrypt_Record Post",
+    "mapping": "Rustls-specific failure refinement of the SPARK old..old+1 counter bound; includes trial-mode error policy",
+    "domain": "All u64 counters, Option<usize> budgets and prior decrypted flags; authentication or oversized-record error; 0..32-byte ciphertext lengths; unwind 5"
+  },
+  {
+    "id": "TRIAL-BUDGET",
+    "harness": "record_layer::kani_proofs::trial_decryption_budget_never_underflows",
+    "spark_source": "src/sparktls.ads: IO_Buffer accounting invariants (analogy only)",
+    "mapping": "Rustls-specific trial-decryption accounting lemma; no direct SPARK 0-RTT contract",
+    "domain": "All Option<usize> budgets and all usize requested lengths, including MAX; unwind 5"
+  },
+  {
+    "id": "RECV-INACTIVE",
+    "harness": "record_layer::kani_proofs::inactive_receive_preserves_counters_and_bytes",
+    "spark_source": "src/sparktls-records.ads: Decrypt_Record frame/bounds (analogy only)",
+    "mapping": "Rustls inactive-key lifecycle/frame lemma; SPARK decrypt has no equivalent passthrough mode",
+    "domain": "Invalid or Prepared state, all u64 counters/flags/trial budgets, arbitrary 0..16-byte payload/type/version; unwind 19"
+  },
+  {
+    "id": "READ-KEY-RESET",
+    "harness": "record_layer::kani_proofs::installing_read_key_resets_sequence_and_controls_trial_mode",
+    "spark_source": "src/sparktls-records.adb: Make_Nonce / Decrypt_Record",
+    "mapping": "Read-key lifecycle lemma needed alongside nonce uniqueness; does not prove key freshness",
+    "domain": "All previous u64 read/write counters, prior decrypted flag and Option<usize> trial budgets; all new trial budgets; unwind 8"
+  },
+  {
+    "id": "INNER-PADDING",
+    "harness": "kani_proofs::tls13_unpadding_preserves_content_and_extracts_last_nonzero_type",
+    "spark_source": "src/sparktls-records.adb: Decrypt_Record last-nonzero scan / Plain_Len bound",
+    "mapping": "Transferred last-nonzero/type and preserved-prefix formula; invalid-input signaling differs",
+    "domain": "Every byte and available prefix of an 8-byte input, all outer type/version fields; includes empty/all-zero and arbitrary padding; unwind 11"
+  },
+  {
+    "id": "INNER-LIMIT",
+    "harness": "kani_proofs::tls13_unpadding_enforces_full_record_size_boundary",
+    "spark_source": "src/sparktls-records.ads: Max_Fragment / Decrypt_Record bounds",
+    "mapping": "Rustls size-policy lemma supporting bounded plaintext; not full SPARK acceptance equivalence",
+    "domain": "Lengths 0..16386 with uniform byte 0x17 (application_data), no trailing padding; unwind 5"
   }
 ]

@@ -1,7 +1,7 @@
 # SPARK contract transfer to rustls with Kani
 
-This is a first, selective port of SPARKTLS record-layer obligations to the
-vendored rustls 0.23.45 implementation. Thirteen harnesses call the actual Rust
+This is a selective port of SPARKTLS record-layer obligations to the
+vendored rustls 0.23.45 implementation. Twenty harnesses call the actual Rust
 code and verify symbolic inputs. They are compiled only under `cfg(kani)`;
 normal benchmark builds use the same upstream production code.
 
@@ -14,12 +14,13 @@ The SPARK reference revision and file hashes are in
 
 The scope includes nonce encoding/uniqueness, TLS 1.3 additional-data headers,
 u16 encoding, reader accounting, bounded record parsing and fragmentation,
-write-sequence exhaustion, and write-key installation. It does **not** establish
+write-sequence exhaustion, receive-side bookkeeping, trial-decryption budgets,
+key installation, and TLS 1.3 padding removal. It does **not** establish
 whole-library or full TLS conformance. In particular, it does not port the
 SPARK arithmetic proofs to AWS-LC, or prove authentication, the full handshake
 state machine, certificate validation, constant-time execution or key erasure.
 
-The [first verified result](RESULTS.md) records the Linux run and its evidence.
+The [verification results](RESULTS.md) record the Linux run and its evidence.
 
 ## Run on x86-64 Linux
 
@@ -61,25 +62,34 @@ lockfile change fails the run. Kani's JSON output includes individual properties
 and tool versions. `summary.json` records the input domains and source hashes;
 `status.json` is marked complete only after every required check succeeds.
 Kani does not expose `--locked`; Cargo metadata is checked with `--locked` first,
-and the driver rejects any lockfile change during proofs or controls.
+and the driver rejects any lockfile change during proofs or controls. It also
+hashes all proof inputs before and after the run and rejects concurrent changes.
 
-With `--self-test`, two failures are required and checked separately:
+With `--self-test`, four failures are required and checked separately:
 
 1. In an isolated copy, change rustls's nonce prefix initialization. The unchanged
    nonce-contract harness must fail its named functional assertion.
-2. On the original implementation, force a one-iteration unwind limit. Kani must
+2. In another isolated copy, remove the receive-counter increment. The unchanged
+   successful-receive harness must fail its named counter assertion.
+3. In another isolated copy, force the extracted inner content type to
+   application_data. The unchanged padding harness must fail its type assertion.
+4. On the original implementation, force a one-iteration unwind limit. Kani must
    report an unwinding assertion failure, demonstrating that insufficient loop
    exploration is not silently accepted.
 
-Neither control changes the working production source. They are not counted as
-verified properties. The CI job runs both controls and uploads its raw results.
+None of the controls changes the working production source. They are not
+counted as verified properties. The CI job runs all four controls and uploads its raw results.
 
 ## Meaning of a successful run
 
 Kani exhaustively checks the symbolic domain stated for each harness, including
 its automatic safety checks. It does not infer a guarantee beyond that domain.
-Reader proofs use up to 32 bytes; fragmentation uses up to 64 bytes in a single
-slice. Nonce and sequence arguments range over their full integer widths.
+Reader proofs use up to 32 bytes; arbitrary-padding proofs use up to 8 bytes;
+receive passthrough proofs use up to 16 bytes; fragmentation uses up to 64 bytes in a single slice.
+The size-policy proof separately covers lengths 0..16386 using uniform 0x17
+bytes without trailing padding. Nonce arguments and trial budgets use full
+integer widths. Successful receive requires a sequence below u64::MAX; failed
+and inactive receive cover all u64 values.
 [Loop bounds and unwinding assertions](https://model-checking.github.io/kani/tutorial-loop-unwinding.html)
 remain enabled. There are no function stubs, `should_panic` harnesses, disabled
 assertion checks, or ignored assembly in the positive suite.
@@ -88,7 +98,10 @@ The outgoing-record proof installs a sequence-checking test provider which
 succeeds on an empty payload. This proves rustls's sequence handoff and update
 around a successful provider call, not the provider's encryption. The write
 policy proof independently covers all counter values and configured limits.
-The receive counter and its caller/lifecycle obligations are not proved here.
+Receive proofs use a sequence-checking provider with success/authentication/other
+error outcomes. They establish counter, flag and budget transitions around
+those outcomes, not AEAD correctness. Read-key installation is covered; the
+caller/lifecycle guarantee against exhausting the receive counter remains open.
 
 The generic header parser is deliberately tested against rustls's policy.
 SPARKTLS's stricter version/type/length checks cannot simply be asserted at that

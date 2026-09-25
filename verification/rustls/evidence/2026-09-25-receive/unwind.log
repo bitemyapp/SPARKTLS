@@ -1,0 +1,35 @@
+Command: ['/home/callen/work/sparktls-perf-2026-09-24/tools/kani/bin/cargo-kani', 'kani', '--lib', '--no-default-features', '--features', 'std', '--output-format', 'terse', '-Z', 'unstable-options', '--harness-timeout', '180s', '--manifest-path', '/home/callen/work/sparktls-perf-2026-09-24/SPARKTLS/third_party/rustls/Cargo.toml', '--harness', 'kani_proofs::nonce_matches_spark_xor_encoding', '--exact', '--unwind', '1', '--export-json', '/home/callen/work/sparktls-perf-2026-09-24/kani-port-artifacts/receive-final/unwind.json']
+Kani Rust Verifier 0.68.0 (cargo plugin)
+CBMC 6.11.0
+   Compiling rustls v0.23.45 (/home/callen/work/sparktls-perf-2026-09-24/SPARKTLS/third_party/rustls)
+warning: use of an unstable feature
+ --> <crate attribute>:1:12
+  |
+1 | #![feature(register_tool)]
+  |            ^^^^^^^^^^^^^
+  |
+  = note: requested on the command line with `--force-warn unstable-features`
+
+warning: Found the following unsupported constructs:
+             - caller_location (1)
+             - foreign function (1)
+         
+         Verification will fail if one or more of these constructs is reachable.
+         See https://model-checking.github.io/kani/rust-feature-support.html for more details.
+
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.36s
+Checking harness kani_proofs::nonce_matches_spark_xor_encoding...
+
+VERIFICATION RESULT:
+ ** 1 of 172 failed (171 undetermined)
+Failed Checks: unwinding assertion loop 0
+ File: "/home/runner/.rustup/toolchains/nightly-2026-08-21-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/iter/adapters/zip.rs", line 276, in <core::iter::Zip<core::slice::IterMut<'_, u8>, core::slice::Iter<'_, u8>> as core::iter::adapters::zip::ZipImpl<core::slice::IterMut<'_, u8>, core::slice::Iter<'_, u8>>>::fold::<(), {closure@core::iter::Iterator::for_each::call<(&mut u8, &u8), {closure@src/crypto/cipher.rs:237:23: 237:32}>::{closure#0}}>
+
+VERIFICATION:- FAILED
+[Kani] info: Verification output shows one or more unwinding failures.
+[Kani] tip: Consider increasing the unwinding value or disabling `--unwinding-assertions`.
+Verification Time: 0.2463246s
+
+Manual Harness Summary:
+Verification failed for - kani_proofs::nonce_matches_spark_xor_encoding
+Complete - 0 successfully verified harnesses, 1 failures, 1 total.

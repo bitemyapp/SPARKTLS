@@ -157,3 +157,124 @@ fn opaque_record_success_fits_available_buffer() {
     }
     assert!(reader.used() <= available);
 }
+
+// SPARK scans forward for the last nonzero octet; rustls pops from the end.
+// A symbolic specification witness states the last-nonzero rule independently.
+#[kani::proof]
+#[kani::unwind(11)]
+fn tls13_unpadding_preserves_content_and_extracts_last_nonzero_type() {
+    use crate::enums::{ContentType, ProtocolVersion};
+    use crate::error::{Error, PeerMisbehaved};
+    use crate::msgs::message::InboundOpaqueMessage;
+
+    let original: [u8; 8] = kani::any();
+    let mut bytes = original;
+    let len: usize = kani::any();
+    kani::assume(len <= bytes.len());
+    // A specification witness avoids building a eight-way last-index mux.
+    // Every nonzero input has exactly one such index; every all-zero input
+    // has the None witness. These assumptions cover every input, and never
+    // constrain a value computed by the production implementation.
+    let last_nonzero: Option<usize> = kani::any();
+    match last_nonzero {
+        Some(index) => {
+            kani::assume(index < len);
+            kani::assume(original[index] != 0);
+            for i in 0..len {
+                if i > index {
+                    kani::assume(original[i] == 0);
+                }
+            }
+        }
+        None => {
+            for i in 0..len {
+                kani::assume(original[i] == 0);
+            }
+        }
+    }
+    let typ = ContentType::from(kani::any::<u8>());
+    let version = ProtocolVersion::from(kani::any::<u16>());
+    let result =
+        InboundOpaqueMessage::new(typ, version, &mut bytes[..len]).into_tls13_unpadded_message();
+    match last_nonzero {
+        Some(index) => {
+            let Ok(plaintext) = result else {
+                kani::assert(false, "nonzero inner plaintext is accepted");
+                return;
+            };
+            kani::assert(
+                u8::from(plaintext.typ) == original[index],
+                "TLS inner content type equals the last nonzero byte",
+            );
+            assert_eq!(plaintext.version, ProtocolVersion::TLSv1_3);
+            assert_eq!(plaintext.payload.len(), index);
+            let position: usize = kani::any();
+            kani::assume(position < original.len());
+            if position < index {
+                kani::assert(
+                    plaintext.payload[position] == original[position],
+                    "unpadding preserves every content byte",
+                );
+            }
+            assert!(plaintext.payload.len() < len);
+        }
+        None => assert!(matches!(
+            result,
+            Err(Error::PeerMisbehaved(
+                PeerMisbehaved::IllegalTlsInnerPlaintext
+            ))
+        )),
+    }
+    let position: usize = kani::any();
+    kani::assume(position < original.len());
+    kani::assert(
+        bytes[position] == original[position],
+        "unpadding preserves backing storage",
+    );
+}
+
+// Separate size-policy lemma: every length through one byte over the limit,
+// using a uniform ApplicationData byte (no trailing padding).
+// The arbitrary-content/type/padding proof above has a smaller, explicit domain.
+#[kani::proof]
+#[kani::unwind(5)]
+fn tls13_unpadding_enforces_full_record_size_boundary() {
+    use crate::enums::{ContentType, ProtocolVersion};
+    use crate::error::{Error, PeerMisbehaved};
+    use crate::msgs::fragmenter::MAX_FRAGMENT_LEN;
+    use crate::msgs::message::InboundOpaqueMessage;
+
+    let mut bytes = [0x17u8; MAX_FRAGMENT_LEN + 2];
+    let len: usize = kani::any();
+    kani::assume(len <= bytes.len());
+    let original_ptr = bytes.as_ptr();
+    let result = InboundOpaqueMessage::new(
+        ContentType::ApplicationData,
+        ProtocolVersion::TLSv1_2,
+        &mut bytes[..len],
+    )
+    .into_tls13_unpadded_message();
+    if len > MAX_FRAGMENT_LEN + 1 {
+        assert!(matches!(result, Err(Error::PeerSentOversizedRecord)));
+    } else if len == 0 {
+        assert!(matches!(
+            result,
+            Err(Error::PeerMisbehaved(
+                PeerMisbehaved::IllegalTlsInnerPlaintext
+            ))
+        ));
+    } else {
+        let Ok(plaintext) = result else {
+            kani::assert(
+                false,
+                "nonempty inner plaintext within size limit is accepted",
+            );
+            return;
+        };
+        assert_eq!(plaintext.payload.len(), len - 1);
+        assert!(plaintext.payload.len() <= MAX_FRAGMENT_LEN);
+        assert_eq!(plaintext.payload.as_ptr(), original_ptr);
+        assert_eq!(plaintext.typ, ContentType::ApplicationData);
+        assert_eq!(plaintext.version, ProtocolVersion::TLSv1_3);
+    }
+}

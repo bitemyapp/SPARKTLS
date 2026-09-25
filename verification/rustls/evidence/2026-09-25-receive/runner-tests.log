@@ -1,0 +1,8 @@
+...............
+----------------------------------------------------------------------
+Ran 15 tests in 0.148s
+
+OK
+
+Medians (bulk: payload MiB/s; handshake: connections/s; x509: validations/s)
+handshake TLS_AES_128_GCM_SHA256           openssl       15.00 1.000x OpenSSL [exploratory]
