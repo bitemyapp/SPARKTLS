@@ -29,8 +29,32 @@ PARENT="$(dirname "$ROOT")"
 SPARKX509_URL="https://github.com/docandrew/sparkx509.git"
 SPARKX509_REF="${SPARKX509_REF:-ba9c37170911a3ef564472187f83a6b38dac8fb2}"   # master 2026-09-15, PR #7 (empty NameConstraints subtrees)
 
-SPARKTLSCRYPTO_URL="https://github.com/docandrew/sparktlscrypto.git"
-SPARKTLSCRYPTO_REF="${SPARKTLSCRYPTO_REF:-b89c8bee8013498ac9008f92f4fd5480740e60df}"   # master 2026-09-23, SP 800-90A HMAC_DRBG with start-up self-test and CAVP KAT lane (PR #12)
+# This branch depends on local crypto optimizations. Preserve their complete
+# Git history in the fork until the sibling repository has its own remote.
+# An explicit ref override continues to select the upstream repository.
+SPARKTLSCRYPTO_UPSTREAM="https://github.com/docandrew/sparktlscrypto.git"
+if [[ -n "${SPARKTLSCRYPTO_REF:-}" ]]; then
+    SPARKTLSCRYPTO_URL="$SPARKTLSCRYPTO_UPSTREAM"
+else
+    SPARKTLSCRYPTO_URL="$ROOT/third_party/sparktlscrypto.bundle"
+    SPARKTLSCRYPTO_REF="7b72f82d6a77373d993fe32dbe3d97c5d94f6d8d"
+    if [[ ! -d "$PARENT/sparktlscrypto" ]]; then
+        python3 - "$ROOT/third_party/sparktlscrypto-provenance.json" "$SPARKTLSCRYPTO_REF" <<'VERIFY_BUNDLE'
+import hashlib
+import json
+import sys
+from pathlib import Path
+
+manifest = Path(sys.argv[1])
+source = json.loads(manifest.read_text())
+bundle = manifest.parent / source["bundle"]
+if source["revision"] != sys.argv[2]:
+    raise SystemExit("Crypto source revision disagrees with the dependency pin")
+if hashlib.sha256(bundle.read_bytes()).hexdigest() != source["sha256"]:
+    raise SystemExit("Crypto source bundle checksum mismatch")
+VERIFY_BUNDLE
+    fi
+fi
 
 
 # ML-KEM-768 for the X25519MLKEM768 key exchange (a library dependency).
@@ -63,7 +87,12 @@ clone_at() {
 # Directory names must match the paths in alire.toml. All lowercase, which
 # is also what `git clone` produces from the repo names -- no override needed.
 clone_at "$SPARKX509_URL"      "$SPARKX509_REF"      "sparkx509"
-clone_at "$SPARKTLSCRYPTO_URL" "$SPARKTLSCRYPTO_REF" "sparktlscrypto"
+if [[ ! -d "$PARENT/sparktlscrypto" && "$SPARKTLSCRYPTO_URL" == "$ROOT/third_party/sparktlscrypto.bundle" ]]; then
+    clone_at "$SPARKTLSCRYPTO_URL" "$SPARKTLSCRYPTO_REF" "sparktlscrypto"
+    git -C "$PARENT/sparktlscrypto" remote set-url origin "$SPARKTLSCRYPTO_UPSTREAM"
+else
+    clone_at "$SPARKTLSCRYPTO_URL" "$SPARKTLSCRYPTO_REF" "sparktlscrypto"
+fi
 clone_at "$SPARKENTROPY_URL"   "$SPARKENTROPY_REF"   "sparkentropy"
 clone_at "$SPARKMLKEM_URL"     "$SPARKMLKEM_REF"     "sparkmlkem"
 clone_at "$SPARKPIV_URL"       "$SPARKPIV_REF"       "sparkpiv"

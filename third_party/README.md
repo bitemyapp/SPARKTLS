@@ -31,3 +31,30 @@ An upgrade requires a newly checksum-verified crate archive, refreshed provenanc
 and per-file hashes, review of each mapped contract, regeneration of both relevant
 lockfiles, the Kani gate with controls, and native benchmark integration checks.
 Do not replace the checksums simply to bypass an unexplained difference.
+
+## SPARKTLSCrypto
+
+
+`sparktlscrypto.bundle` is a self-contained Git bundle of the sibling repository,
+including all twelve local optimization commits through
+`7b72f82d6a77373d993fe32dbe3d97c5d94f6d8d`. This preserves both source and history in the
+SPARKTLS fork; compiler binaries and benchmark build products are not included.
+The bundle preserves the upstream license files as part of that history.
+`sparktlscrypto-provenance.json` records its SHA-256 and upstream URL.
+
+For a fresh checkout, run `bash ci/fetch-deps.sh`. It checks the bundle checksum,
+clones it into `../sparktlscrypto`, and checks out the recorded commit. The cloned
+repository's origin points to upstream for reference; the optimization commits
+are not claimed to exist there. Existing sibling directories are left alone.
+Setting `SPARKTLSCRYPTO_REF` explicitly retains the upstream-ref override.
+
+To inspect or recover just the history, independently of the dependency script:
+
+```sh
+git bundle verify third_party/sparktlscrypto.bundle
+git clone third_party/sparktlscrypto.bundle ../sparktlscrypto-recovered
+```
+
+If further crypto commits are made, regenerate the bundle from the sibling with
+`git bundle create <absolute-bundle-path> HEAD refs/heads/codex/prepared-aes-gcm`,
+then update its provenance checksum/revision and the dependency pin together.

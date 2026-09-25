@@ -1,0 +1,9 @@
+{
+  "repository": "https://github.com/docandrew/sparktlscrypto",
+  "revision": "7b72f82d6a77373d993fe32dbe3d97c5d94f6d8d",
+  "branch": "codex/prepared-aes-gcm",
+  "bundle": "sparktlscrypto.bundle",
+  "sha256": "7ac31750e4aaaebd3c32504a692a2ef3e15967bc1e04ff8b6bd715b13c7bfe5b",
+  "purpose": "Self-contained source history including the sibling crypto optimization commits required by this SPARKTLS branch.",
+  "restore": "Run bash ci/fetch-deps.sh from a fresh checkout. Existing sibling directories are left alone."
+}
