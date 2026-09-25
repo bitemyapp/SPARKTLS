@@ -221,7 +221,9 @@ def build(args, out):
     env["SPARKTLSCRYPTO_ASM"] = "enabled"
     if not args.no_build:
         if "sparktls" in args.implementations:
-            commands.append([args.alr, "-n", "--no-tty", "build", "--", "-s"])
+            # Force archive rebuilding too: a rapid source/object update can
+            # otherwise share the archive's timestamp and leave stale code.
+            commands.append([args.alr, "-n", "--no-tty", "build", "--", "-f", "-s"])
             mains = []
             if "handshake" in args.scenarios:
                 mains.append("tls_bench_server.adb")

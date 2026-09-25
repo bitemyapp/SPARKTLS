@@ -163,7 +163,9 @@ accumulated state; startup is not included in the rate. `--no-restart-servers`
 keeps each cell's servers alive through its warmup and samples. Report which mode
 you used: one long-lived server can produce a stable but unrepresentative result.
 
-GPRbuild runs with `-s` so changes to compiler switches force recompilation.
+The default library build uses `-f -s` to force compilation and archive rebuilding.
+This also avoids stale archives after rapid changes within the same timestamp
+resolution; `-s` alone only tracks compiler-switch changes.
 Source fingerprints include the sibling dependencies and generated configuration,
 and are recorded after the build. Source copies inside another Git checkout are
 marked as copies instead of attributing the enclosing checkout's HEAD to them.
