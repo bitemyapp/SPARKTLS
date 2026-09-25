@@ -1,0 +1,46 @@
+name: Rustls Kani contracts
+on:
+  pull_request:
+    paths:
+      - 'third_party/**'
+      - 'verification/rustls/**'
+      - 'ci/rustls_kani.sh'
+      - 'tests/benchmarks/**'
+      - '.github/workflows/rustls-kani.yml'
+  push:
+    branches: [main, master]
+    paths:
+      - 'third_party/**'
+      - 'verification/rustls/**'
+      - 'ci/rustls_kani.sh'
+      - 'tests/benchmarks/**'
+      - '.github/workflows/rustls-kani.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      CARGO_BUILD_JOBS: '2'
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - name: Install pinned Kani
+        run: |
+          cargo install --locked kani-verifier --version "$(cat verification/rustls/KANI_VERSION)"
+          cargo kani setup
+      - name: Verify vendor and contracts, including negative controls
+        run: bash ci/rustls_kani.sh --jobs 1 --self-test --out verification/rustls/results/ci
+      - name: Check benchmark adapter
+        run: |
+          cargo check --locked --manifest-path tests/benchmarks/rustls/Cargo.toml
+          python3 -m unittest discover -s tests/benchmarks -p 'test_*.py'
+      - name: Upload proof logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: rustls-kani-results
+          path: |
+            verification/rustls/results/ci/*.json
+            verification/rustls/results/ci/*.log

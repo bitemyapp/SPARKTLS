@@ -94,6 +94,23 @@ class Measurements(unittest.TestCase):
             self.assertTrue(dependency["source_copy"])
             self.assertIsNone(dependency["revision"])
 
+    def test_vendored_rustls_source_is_fingerprinted(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            vendor = root / "third_party/rustls"
+            (vendor / "src").mkdir(parents=True)
+            (vendor / "target").mkdir()
+            source = vendor / "src/lib.rs"
+            source.write_text("// locally patched rustls\n")
+            (vendor / "target/generated.rs").write_text("// build output\n")
+            out = root / "result"
+            out.mkdir()
+            with mock.patch.object(run, "ROOT", root), mock.patch.object(run, "HERE", root / "tests/benchmarks"):
+                run.source_hashes(out)
+            hashes = json.loads((out / "source-sha256.json").read_text())
+            self.assertEqual(hashes["third_party/rustls/src/lib.rs"], hashlib.sha256(source.read_bytes()).hexdigest())
+            self.assertNotIn("third_party/rustls/target/generated.rs", hashes)
+
     def test_warmup_does_not_affect_summary(self):
         with tempfile.TemporaryDirectory() as directory:
             out = Path(directory)

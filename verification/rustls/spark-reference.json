@@ -1,0 +1,8 @@
+{
+  "revision": "6c794ab95653934f15e7cc23ec062f805dec2bd9",
+  "files": {
+    "src/sparktls.ads": "75f69c7871abdb6fad3cbec48c970e64ba478c53fe6d86144a2bb0b359b13ea3",
+    "src/sparktls-records.ads": "0c6fa984a62907072a255719907a65d1550545fc65dbcfceb84d59389f93e089",
+    "src/sparktls-records.adb": "0f2a7d76d9886bec979040aaee0d5509b1029e2756148d3bc7d3773129d0cffe"
+  }
+}

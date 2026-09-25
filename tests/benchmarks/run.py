@@ -200,7 +200,7 @@ def fingerprint(args):
 def source_hashes(out):
     # Also identify uncommitted adapter/source changes: git HEAD alone cannot.
     paths = list(ROOT.glob("*.gpr")) + list(ROOT.glob("alire.*"))
-    for directory in (ROOT / "src", ROOT / "generated", ROOT / "examples", HERE):
+    for directory in (ROOT / "src", ROOT / "generated", ROOT / "examples", HERE, ROOT / "third_party/rustls"):
         for current, dirs, names in os.walk(directory):
             dirs[:] = sorted(d for d in dirs if d not in ("target", "results", "__pycache__", ".git"))
             for name in sorted(names):

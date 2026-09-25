@@ -1,0 +1,93 @@
+[
+  {
+    "id": "NONCE-ENC",
+    "harness": "kani_proofs::nonce_matches_spark_xor_encoding",
+    "spark_source": "src/sparktls-records.adb: Make_Nonce",
+    "mapping": "Implementation formula (not an explicit functional SPARK postcondition)",
+    "domain": "All 96-bit IVs and all u64 sequences; unwind 14"
+  },
+  {
+    "id": "NONCE-UNIQUE",
+    "harness": "kani_proofs::nonce_is_injective_for_a_fixed_iv",
+    "spark_source": "src/sparktls-records.adb: Make_Nonce",
+    "mapping": "Derived strengthening: injectivity for a fixed IV",
+    "domain": "All distinct pairs of u64 sequences and all 96-bit IVs; unwind 14"
+  },
+  {
+    "id": "AAD",
+    "harness": "kani_proofs::tls13_aad_matches_spark_record_header",
+    "spark_source": "src/sparktls-records.adb: Build_Encrypted_Record / Hdr",
+    "mapping": "Encoding formula and record-version invariant",
+    "domain": "All plaintext lengths 0..16384; fixed 16-byte tag and one inner-type byte; unwind 8"
+  },
+  {
+    "id": "U16",
+    "harness": "kani_proofs::u16_codec_matches_spark_ts16",
+    "spark_source": "src/sparktls-records.adb: TS16",
+    "mapping": "Implementation formula plus decode/encode strengthening",
+    "domain": "All u16 values; unwind 5"
+  },
+  {
+    "id": "BUFFER-TAKE",
+    "harness": "kani_proofs::reader_take_preserves_accounting",
+    "spark_source": "src/sparktls.ads: IO_Buffer predicate and Available",
+    "mapping": "Adapted accounting invariant; rustls Reader is not the SPARK IO_Buffer",
+    "domain": "All bytes in a 0..32-byte slice, all valid initial cursors, all usize take lengths; unwind 35"
+  },
+  {
+    "id": "BUFFER-SUB",
+    "harness": "kani_proofs::reader_sub_and_rest_preserve_bytes",
+    "spark_source": "src/sparktls.ads: IO_Buffer predicate and Available",
+    "mapping": "Adapted accounting/content invariant",
+    "domain": "All bytes in 0..32-byte slices and all usize sub lengths; unwind 35"
+  },
+  {
+    "id": "HEADER",
+    "harness": "kani_proofs::opaque_header_decodes_fields_and_policy",
+    "spark_source": "src/sparktls-records.ads: Parse_Record_Header",
+    "mapping": "Partial mapping: actual rustls generic policy; see discrepancies",
+    "domain": "All five header bytes (40 bits); unwind 8"
+  },
+  {
+    "id": "RECORD-FITS",
+    "harness": "kani_proofs::opaque_record_success_fits_available_buffer",
+    "spark_source": "src/sparktls-records.ads: Parse_Record_Header Post",
+    "mapping": "Transferred fit-in-buffer postcondition, with rustls stage limits",
+    "domain": "Every available prefix of every 32-byte input; unwind 36"
+  },
+  {
+    "id": "FRAGMENT-CONFIG",
+    "harness": "msgs::fragmenter::kani_proofs::fragment_configuration_preserves_rfc_bound",
+    "spark_source": "src/sparktls-records.ads: Build_Handshake_Record Pre / Max_Fragment",
+    "mapping": "Adapted RFC fragment-bound obligation",
+    "domain": "All Option<usize> settings and every valid prior max fragment; unwind 3"
+  },
+  {
+    "id": "FRAGMENT-BYTES",
+    "harness": "msgs::fragmenter::kani_proofs::fragment_partition_preserves_bytes_and_metadata",
+    "spark_source": "src/sparktls-records.ads: Build_Handshake_Record Pre / Max_Fragment",
+    "mapping": "Adapted fragmentation safety and preservation obligation",
+    "domain": "Single-slice payloads 0..64 bytes, fragment limits 27..16384, all type/version fields; unwind 67"
+  },
+  {
+    "id": "SEQ-LIMIT",
+    "harness": "record_layer::kani_proofs::write_sequence_policy_prevents_wrap",
+    "spark_source": "src/sparktls-records.adb: Build_Encrypted_Record counter exhaustion guard",
+    "mapping": "Adapted non-wrap obligation; rustls limits are earlier",
+    "domain": "All u64 sequence numbers, additions and configured message limits; unwind 8"
+  },
+  {
+    "id": "SEQ-STEP",
+    "harness": "record_layer::kani_proofs::outgoing_record_uses_old_sequence_then_increments_once",
+    "spark_source": "src/sparktls-records.ads: Build_Encrypted_Record Post",
+    "mapping": "Transferred one-step counter contract, conditional on a successful provider",
+    "domain": "All write sequences below rustls hard limit; empty payload; sequence-checking provider; unwind 10"
+  },
+  {
+    "id": "KEY-RESET",
+    "harness": "record_layer::kani_proofs::installing_write_key_resets_sequence_and_caps_limit",
+    "spark_source": "src/sparktls-records.adb: Make_Nonce / Build_Encrypted_Record",
+    "mapping": "Rustls lifecycle lemma needed alongside nonce uniqueness",
+    "domain": "All previous u64 read/write counters and all u64 requested limits; unwind 8"
+  }
+]

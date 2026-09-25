@@ -72,7 +72,9 @@ The handshake entry point now uses `tls_bench_server` in place of the old
 therefore describe the event-loop example; compare old application results
 separately when investigating task creation or cleanup costs.
 
-The rustls adapter is pinned to **rustls 0.23.45** with the **aws-lc-rs** provider.
+The rustls adapter uses the [vendored rustls 0.23.45](../../../third_party/README.md)
+source with the **aws-lc-rs** provider. [Kani contract checks](../../../verification/rustls/README.md)
+verify a selected set of provider-independent record-layer properties.
 Its cryptography includes native C/assembly; it is not a pure-Rust crypto comparison.
 Exact backend versions are in [Cargo.lock](rustls/Cargo.lock). The adapter handles
 one connection at a time, reuses its server configuration and ticket keys, and
