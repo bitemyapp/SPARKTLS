@@ -7,7 +7,9 @@ multicore server capacity.
 
 See [the Linux measurements and optimization report](PERFORMANCE_2026-09-24.md)
 for the prepared AES-GCM results. The [follow-up report](PERFORMANCE_FOLLOWUP_2026-09-24.md)
-covers Curve25519 arithmetic and the record-copy experiment.
+covers Curve25519 arithmetic and the record-copy experiment. The
+[GHASH report](PERFORMANCE_GHASH_2026-09-25.md) records the next retained kernel
+optimization and the deferred socket-buffer experiment.
 
 ## Running
 
