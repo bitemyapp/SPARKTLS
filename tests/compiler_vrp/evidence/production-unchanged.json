@@ -1,0 +1,8 @@
+{
+  "unchanged": true,
+  "sha256": {
+    "/home/callen/work/sparktls-perf-2026-09-24/SPARKTLS/alire/alire.lock": "ddf2ec51a63ee3cb473f17bff975e726abb60a733b089b4fb1759d5037d78ad5",
+    "/home/callen/work/sparktls-perf-2026-09-24/SPARKTLS/bin/examples/tls_web_epoll": "4b51917695026f3cfff7a8db3f35d3dd1bd1cb09a8f7c74953c008ec76ce976e",
+    "/home/callen/work/sparktls-perf-2026-09-24/SPARKTLS/bin/examples/tls_bench_server": "1940afa7efbf248459dd620327ae2c78ef17809904675bf6df9365e7b7ad44f1"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "commit": "259e9cbba7658fe6069d7382159ac5ca08578908",
+  "before": {
+    "gnat1": "e58c48bda681bea2d052752cae7f9662c8e9dbc9d5da64af5b240095bb2d4795",
+    "cc1": "e857c7bf358dbcde49fe4b1d07823382be9bff7aa82072ab18ce86dc895692dc"
+  },
+  "after": {
+    "gnat1": "e58c48bda681bea2d052752cae7f9662c8e9dbc9d5da64af5b240095bb2d4795",
+    "cc1": "1cedb3d00f704471b895b94e7b1695a2093c6580d25e05a5185d83bf0d3fb359"
+  },
+  "identical": false,
+  "cc1_text_sha256": {
+    "preserved": "110f9aea7c6d6cb04a682bda9fcb78975834b2740290544be6be5b237f847d6c",
+    "rebuilt": "110f9aea7c6d6cb04a682bda9fcb78975834b2740290544be6be5b237f847d6c"
+  },
+  "gnat1_identical": true,
+  "cc1_text_identical": true
+}

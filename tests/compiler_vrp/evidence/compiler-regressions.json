@@ -1,0 +1,150 @@
+[
+  {
+    "compiler": "stock",
+    "opt": "O1",
+    "test": "array_slice_extent",
+    "build_rc": 0,
+    "rc": 0,
+    "stderr": ""
+  },
+  {
+    "compiler": "stock",
+    "opt": "O2",
+    "test": "array_slice_extent",
+    "build_rc": 0,
+    "rc": 1,
+    "stderr": "\nraised PROGRAM_ERROR : array_slice_extent.adb:42 explicit raise\n"
+  },
+  {
+    "compiler": "stock",
+    "opt": "O3",
+    "test": "array_slice_extent",
+    "build_rc": 0,
+    "rc": 1,
+    "stderr": "\nraised PROGRAM_ERROR : array_slice_extent.adb:42 explicit raise\n"
+  },
+  {
+    "compiler": "stock",
+    "opt": "O2",
+    "test": "gcc.dg/tree-ssa/ssa-dse-35.c",
+    "build_rc": 0,
+    "rc": 0,
+    "stderr": "",
+    "deleted_dead_stores": 1
+  },
+  {
+    "compiler": "stock",
+    "opt": "O2",
+    "test": "gcc.dg/torture/pr113831.c",
+    "build_rc": 0,
+    "rc": 0,
+    "stderr": ""
+  },
+  {
+    "compiler": "stock",
+    "opt": "O2",
+    "test": "gcc.dg/torture/pr113898.c",
+    "build_rc": 0,
+    "rc": 0,
+    "stderr": ""
+  },
+  {
+    "compiler": "stock",
+    "opt": "O3",
+    "test": "gcc.dg/tree-ssa/ssa-dse-35.c",
+    "build_rc": 0,
+    "rc": 0,
+    "stderr": "",
+    "deleted_dead_stores": 1
+  },
+  {
+    "compiler": "stock",
+    "opt": "O3",
+    "test": "gcc.dg/torture/pr113831.c",
+    "build_rc": 0,
+    "rc": 0,
+    "stderr": ""
+  },
+  {
+    "compiler": "stock",
+    "opt": "O3",
+    "test": "gcc.dg/torture/pr113898.c",
+    "build_rc": 0,
+    "rc": 0,
+    "stderr": ""
+  },
+  {
+    "compiler": "fixed",
+    "opt": "O1",
+    "test": "array_slice_extent",
+    "build_rc": 0,
+    "rc": 0,
+    "stderr": ""
+  },
+  {
+    "compiler": "fixed",
+    "opt": "O2",
+    "test": "array_slice_extent",
+    "build_rc": 0,
+    "rc": 0,
+    "stderr": ""
+  },
+  {
+    "compiler": "fixed",
+    "opt": "O3",
+    "test": "array_slice_extent",
+    "build_rc": 0,
+    "rc": 0,
+    "stderr": ""
+  },
+  {
+    "compiler": "fixed",
+    "opt": "O2",
+    "test": "gcc.dg/tree-ssa/ssa-dse-35.c",
+    "build_rc": 0,
+    "rc": 0,
+    "stderr": "",
+    "deleted_dead_stores": 1
+  },
+  {
+    "compiler": "fixed",
+    "opt": "O2",
+    "test": "gcc.dg/torture/pr113831.c",
+    "build_rc": 0,
+    "rc": 0,
+    "stderr": ""
+  },
+  {
+    "compiler": "fixed",
+    "opt": "O2",
+    "test": "gcc.dg/torture/pr113898.c",
+    "build_rc": 0,
+    "rc": 0,
+    "stderr": ""
+  },
+  {
+    "compiler": "fixed",
+    "opt": "O3",
+    "test": "gcc.dg/tree-ssa/ssa-dse-35.c",
+    "build_rc": 0,
+    "rc": 0,
+    "stderr": "",
+    "deleted_dead_stores": 1
+  },
+  {
+    "compiler": "fixed",
+    "opt": "O3",
+    "test": "gcc.dg/torture/pr113831.c",
+    "build_rc": 0,
+    "rc": 0,
+    "stderr": ""
+  },
+  {
+    "compiler": "fixed",
+    "opt": "O3",
+    "test": "gcc.dg/torture/pr113898.c",
+    "build_rc": 0,
+    "rc": 0,
+    "stderr": ""
+  }
+]

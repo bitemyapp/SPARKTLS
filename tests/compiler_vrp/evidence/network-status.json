@@ -1,0 +1,17 @@
+{
+  "complete": true,
+  "workload_end": [
+    "COMMAND         %CPU",
+    "nockchain        118",
+    "honk             106",
+    "python3          100",
+    "java            38.2",
+    "sccache          8.4",
+    "node             3.2",
+    "plymouthd        2.7",
+    "python3          1.4",
+    "warp-svc         1.0",
+    "dockerd          0.6",
+    "hoonc_bin        0.6"
+  ]
+}

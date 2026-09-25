@@ -1,0 +1,302 @@
+[
+  {
+    "scenario": "handshake",
+    "suite": "TLS_AES_128_GCM_SHA256",
+    "variants": {
+      "app-current": {
+        "n": 20,
+        "median": 2388.0940380308048,
+        "cv_percent": 9.370677456137855,
+        "minimum": 1533.0502834249073,
+        "maximum": 2504.7881080809016
+      },
+      "app-broad": {
+        "n": 20,
+        "median": 2363.9415766390102,
+        "cv_percent": 10.662721539928253,
+        "minimum": 1620.973818500775,
+        "maximum": 2501.0409269737756
+      },
+      "app-fixed": {
+        "n": 20,
+        "median": 2370.8272489766464,
+        "cv_percent": 11.867619649494555,
+        "minimum": 1494.952124157327,
+        "maximum": 2523.583813787278
+      }
+    },
+    "comparisons": {
+      "app-broad_vs_app-current": {
+        "paired_gain_percent": 0.10306484436025665,
+        "ci95": [
+          -2.0909553858276366,
+          1.2169348562079185
+        ]
+      },
+      "app-fixed_vs_app-current": {
+        "paired_gain_percent": 0.3774024386682395,
+        "ci95": [
+          -1.6027102158664708,
+          1.236337388166242
+        ]
+      },
+      "app-fixed_vs_app-broad": {
+        "paired_gain_percent": -0.30683929537478893,
+        "ci95": [
+          -1.6642481874973136,
+          1.4416718374878679
+        ]
+      }
+    }
+  },
+  {
+    "scenario": "handshake",
+    "suite": "TLS_AES_256_GCM_SHA384",
+    "variants": {
+      "app-current": {
+        "n": 20,
+        "median": 2187.184109621755,
+        "cv_percent": 6.0315331919276565,
+        "minimum": 1703.671523014933,
+        "maximum": 2280.0860828853306
+      },
+      "app-broad": {
+        "n": 20,
+        "median": 2219.937973436605,
+        "cv_percent": 3.8003791607568678,
+        "minimum": 1916.571144566159,
+        "maximum": 2279.920514772197
+      },
+      "app-fixed": {
+        "n": 20,
+        "median": 2253.984400769979,
+        "cv_percent": 5.4300786376221994,
+        "minimum": 1808.3268956809868,
+        "maximum": 2320.4878259902807
+      }
+    },
+    "comparisons": {
+      "app-broad_vs_app-current": {
+        "paired_gain_percent": 1.8493157283104744,
+        "ci95": [
+          -0.5364990003301706,
+          4.0266776084589395
+        ]
+      },
+      "app-fixed_vs_app-current": {
+        "paired_gain_percent": 1.9652415203088358,
+        "ci95": [
+          0.6197517546567499,
+          4.067036454466422
+        ]
+      },
+      "app-fixed_vs_app-broad": {
+        "paired_gain_percent": 1.1753983307127958,
+        "ci95": [
+          0.1296077615854374,
+          3.0866619846772747
+        ]
+      }
+    }
+  },
+  {
+    "scenario": "handshake",
+    "suite": "TLS_CHACHA20_POLY1305_SHA256",
+    "variants": {
+      "app-current": {
+        "n": 20,
+        "median": 2334.8430831869,
+        "cv_percent": 12.75300199565197,
+        "minimum": 1581.491700309097,
+        "maximum": 2501.6847415776615
+      },
+      "app-broad": {
+        "n": 20,
+        "median": 2410.4518726782526,
+        "cv_percent": 9.642141490590733,
+        "minimum": 1643.0680515882086,
+        "maximum": 2494.7119876075376
+      },
+      "app-fixed": {
+        "n": 20,
+        "median": 2328.3027165396425,
+        "cv_percent": 10.947190794070199,
+        "minimum": 1532.7026620420572,
+        "maximum": 2506.6526267856475
+      }
+    },
+    "comparisons": {
+      "app-broad_vs_app-current": {
+        "paired_gain_percent": 1.8996253725640733,
+        "ci95": [
+          -0.3454496498514481,
+          7.752636829323301
+        ]
+      },
+      "app-fixed_vs_app-current": {
+        "paired_gain_percent": 0.14443707020300733,
+        "ci95": [
+          -1.360116307798398,
+          3.9817510172272197
+        ]
+      },
+      "app-fixed_vs_app-broad": {
+        "paired_gain_percent": -0.9046072085546752,
+        "ci95": [
+          -4.134687525276753,
+          0.38347404337656377
+        ]
+      }
+    }
+  },
+  {
+    "scenario": "bulk",
+    "suite": "TLS_AES_128_GCM_SHA256",
+    "variants": {
+      "app-current": {
+        "n": 20,
+        "median": 4271.1019932233485,
+        "cv_percent": 7.7034409039336325,
+        "minimum": 2924.092062717719,
+        "maximum": 4442.868329116669
+      },
+      "app-broad": {
+        "n": 20,
+        "median": 4182.69456079277,
+        "cv_percent": 9.445006188264927,
+        "minimum": 2772.627197583143,
+        "maximum": 4440.328038374455
+      },
+      "app-fixed": {
+        "n": 20,
+        "median": 4222.05725227123,
+        "cv_percent": 10.611470322389827,
+        "minimum": 2821.5122365818693,
+        "maximum": 4450.722445334018
+      }
+    },
+    "comparisons": {
+      "app-broad_vs_app-current": {
+        "paired_gain_percent": -0.45220384106581246,
+        "ci95": [
+          -4.488142837351223,
+          1.4687594168861118
+        ]
+      },
+      "app-fixed_vs_app-current": {
+        "paired_gain_percent": 0.3526303603440084,
+        "ci95": [
+          -1.7489668478797626,
+          1.429418500698898
+        ]
+      },
+      "app-fixed_vs_app-broad": {
+        "paired_gain_percent": -0.23590186124384238,
+        "ci95": [
+          -1.357711574079229,
+          1.2313794716017123
+        ]
+      }
+    }
+  },
+  {
+    "scenario": "bulk",
+    "suite": "TLS_AES_256_GCM_SHA384",
+    "variants": {
+      "app-current": {
+        "n": 20,
+        "median": 3417.0255813015688,
+        "cv_percent": 10.942395105150458,
+        "minimum": 2456.7059399960094,
+        "maximum": 3823.4401242827503
+      },
+      "app-broad": {
+        "n": 20,
+        "median": 3333.883648816686,
+        "cv_percent": 9.932996699748525,
+        "minimum": 2573.624591228903,
+        "maximum": 3904.2386615523023
+      },
+      "app-fixed": {
+        "n": 20,
+        "median": 3284.1862334652697,
+        "cv_percent": 11.255164556162178,
+        "minimum": 2646.4702028656825,
+        "maximum": 3934.3026888806844
+      }
+    },
+    "comparisons": {
+      "app-broad_vs_app-current": {
+        "paired_gain_percent": -1.4315502600733387,
+        "ci95": [
+          -4.9556132641529915,
+          5.711775341727066
+        ]
+      },
+      "app-fixed_vs_app-current": {
+        "paired_gain_percent": 2.347549133676452,
+        "ci95": [
+          -8.629707304240693,
+          5.419573694622903
+        ]
+      },
+      "app-fixed_vs_app-broad": {
+        "paired_gain_percent": -1.1393993173766548,
+        "ci95": [
+          -8.431394352979083,
+          8.100378095342498
+        ]
+      }
+    }
+  },
+  {
+    "scenario": "bulk",
+    "suite": "TLS_CHACHA20_POLY1305_SHA256",
+    "variants": {
+      "app-current": {
+        "n": 20,
+        "median": 2054.355911440262,
+        "cv_percent": 8.61311825991693,
+        "minimum": 1575.7062171159107,
+        "maximum": 2274.632239789784
+      },
+      "app-broad": {
+        "n": 20,
+        "median": 2081.8017956971235,
+        "cv_percent": 9.301836733044096,
+        "minimum": 1620.5781991674005,
+        "maximum": 2249.5130987355983
+      },
+      "app-fixed": {
+        "n": 20,
+        "median": 2072.960614752826,
+        "cv_percent": 7.077108214542071,
+        "minimum": 1658.756857481741,
+        "maximum": 2298.6510818288652
+      }
+    },
+    "comparisons": {
+      "app-broad_vs_app-current": {
+        "paired_gain_percent": -0.08235704033873192,
+        "ci95": [
+          -2.160868637069707,
+          1.9145353055078362
+        ]
+      },
+      "app-fixed_vs_app-current": {
+        "paired_gain_percent": 1.1224841240416894,
+        "ci95": [
+          -0.8187343044683049,
+          2.0726632618338514
+        ]
+      },
+      "app-fixed_vs_app-broad": {
+        "paired_gain_percent": 0.06686688622493109,
+        "ci95": [
+          -1.618536135047427,
+          2.2066612817723263
+        ]
+      }
+    }
+  }
+]

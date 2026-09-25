@@ -1,0 +1,51 @@
+[
+  {
+    "name": "installed-O2",
+    "command": [
+      "/home/callen/.local/share/alire/toolchains/gnat_native_16.1.0_9f74f58a/bin/gnatmake",
+      "-q",
+      "-f",
+      "/home/callen/work/sparktls-perf-2026-09-24/SPARKTLS/tests/compiler_vrp/array_slice_extent.adb",
+      "-o",
+      "test",
+      "-O2",
+      "-gnatp"
+    ],
+    "expected_exit": 1,
+    "exit": 1,
+    "stderr": "\nraised PROGRAM_ERROR : array_slice_extent.adb:42 explicit raise\n"
+  },
+  {
+    "name": "installed-O3",
+    "command": [
+      "/home/callen/.local/share/alire/toolchains/gnat_native_16.1.0_9f74f58a/bin/gnatmake",
+      "-q",
+      "-f",
+      "/home/callen/work/sparktls-perf-2026-09-24/SPARKTLS/tests/compiler_vrp/array_slice_extent.adb",
+      "-o",
+      "test",
+      "-O3",
+      "-gnatp"
+    ],
+    "expected_exit": 1,
+    "exit": 1,
+    "stderr": "\nraised PROGRAM_ERROR : array_slice_extent.adb:42 explicit raise\n"
+  },
+  {
+    "name": "installed-control",
+    "command": [
+      "/home/callen/.local/share/alire/toolchains/gnat_native_16.1.0_9f74f58a/bin/gnatmake",
+      "-q",
+      "-f",
+      "/home/callen/work/sparktls-perf-2026-09-24/SPARKTLS/tests/compiler_vrp/array_slice_extent.adb",
+      "-o",
+      "test",
+      "-O2",
+      "-gnatp",
+      "-fno-tree-vrp"
+    ],
+    "expected_exit": 0,
+    "exit": 0,
+    "stderr": ""
+  }
+]

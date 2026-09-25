@@ -1,0 +1,20 @@
+Using built-in specs.
+COLLECT_GCC=/home/callen/.local/share/alire/toolchains/gnat_native_16.1.0_9f74f58a/bin/gcc
+COLLECT_LTO_WRAPPER=/home/callen/.local/share/alire/toolchains/gnat_native_16.1.0_9f74f58a/bin/../libexec/gcc/x86_64-pc-linux-gnu/16.1.0/lto-wrapper
+Target: x86_64-pc-linux-gnu
+Configured with: ../src/configure --prefix=/home/runner/work/GNAT-FSF-builds/GNAT-FSF-builds/sbx/x86_64-linux/gcc/install --with-build-time-tools=/home/runner/work/GNAT-FSF-builds/GNAT-FSF-builds/sbx/x86_64-linux/binutils/install/bin --enable-languages=c,ada,c++ --enable-libstdcxx --enable-libstdcxx-threads --enable-libada --with-pkgversion=GNAT-FSF-builds --disable-nls --without-libiconv-prefix --disable-libstdcxx-pch --enable-lto --disable-multilib --enable-threads=posix --enable-default-pie --with-gnu-ld --with-gnu-as --with-mpfr=/home/runner/work/GNAT-FSF-builds/GNAT-FSF-builds/sbx/x86_64-linux/mpfr/install --with-gmp=/home/runner/work/GNAT-FSF-builds/GNAT-FSF-builds/sbx/x86_64-linux/gmp/install --with-mpc=/home/runner/work/GNAT-FSF-builds/GNAT-FSF-builds/sbx/x86_64-linux/mpc/install --with-isl=/home/runner/work/GNAT-FSF-builds/GNAT-FSF-builds/sbx/x86_64-linux/isl/install --build=x86_64-pc-linux-gnu
+Thread model: posix
+Supported LTO compression algorithms: zlib zstd
+gcc version 16.1.0 (GNAT-FSF-builds)
+
+GCC release source: 6afcc4f6da931eb93f3ab001a0dd9650ea71d1ea
+
+#!/bin/bash
+set -euo pipefail
+export M4=/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/compiler-deps/root/usr/bin/m4
+export BISON_PKGDATADIR=/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/compiler-deps/root/usr/share/bison
+export PATH=/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/compiler-deps/root/usr/bin:/home/callen/.local/share/alire/toolchains/gnat_native_16.1.0_9f74f58a/bin:$PATH
+export LD_LIBRARY_PATH=/home/callen/.local/share/alire/toolchains/gnat_native_16.1.0_9f74f58a/lib64
+cd /home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/gcc-build
+../gcc/configure --prefix=/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/gcc-install --disable-bootstrap --disable-multilib --disable-nls --enable-languages=c,ada --disable-libsanitizer --disable-libquadmath --disable-libssp --disable-libgomp --with-gmp-include=/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/compiler-deps/root/usr/include/x86_64-linux-gnu --with-gmp-lib=/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/compiler-deps/root/usr/lib/x86_64-linux-gnu --with-mpfr-include=/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/compiler-deps/root/usr/include --with-mpfr-lib=/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/compiler-deps/root/usr/lib/x86_64-linux-gnu --with-mpc-include=/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/compiler-deps/root/usr/include --with-mpc-lib=/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/compiler-deps/root/usr/lib/x86_64-linux-gnu CXXFLAGS='-O2 -g0' CFLAGS='-O2 -g0'
+make -j12 all-gcc MAKEINFO=true M4="$M4" FLEX=/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/compiler-deps/root/usr/bin/flex

@@ -1,0 +1,161 @@
+{
+  "runner_sha256": "3d01d2332246ec48f0239e0fff4996e3c90402834388d284036ed88f4be18375",
+  "args": {
+    "openssl": "/usr/bin/openssl",
+    "scenarios": [
+      "handshake",
+      "bulk"
+    ],
+    "size": 16777216,
+    "server_cpu": 32,
+    "client_cpu": 33,
+    "seconds": 1,
+    "runs": 1,
+    "warmups": 0,
+    "restart_servers": false,
+    "implementations": [
+      "sparktls"
+    ]
+  },
+  "trials": 20,
+  "warmups": 1,
+  "source_repos": {
+    "sparktlscrypto": "227d3bf4fa5a2ceb06ab8e28a724dd9746829fe1",
+    "SPARKTLS": "454dbc972f7dc2d7b3ce17d556c6bef09ce58c47"
+  },
+  "variants": {
+    "app-current": {
+      "command": [
+        "gprbuild",
+        "-f",
+        "-s",
+        "-P",
+        "examples/sparktls_examples.gpr",
+        "-j8",
+        "tls_web_epoll.adb",
+        "tls_bench_server.adb",
+        "-cargs:Ada"
+      ],
+      "environment": {
+        "SPARKENTROPY_ALIRE_PREFIX": "/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/stack/sparkentropy",
+        "SPARKMLKEM_ALIRE_PREFIX": "/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/stack/sparkmlkem",
+        "SPARKNACL_ALIRE_PREFIX": "/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/stack/sparknacl",
+        "SPARKTLSCRYPTO_ALIRE_PREFIX": "/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/stack/sparktlscrypto",
+        "SPARKTLS_ALIRE_PREFIX": "/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/stack/SPARKTLS",
+        "SPARKX509_ALIRE_PREFIX": "/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/stack/sparkx509",
+        "SPARKTLS_BUILD_MODE": "optimize",
+        "SPARKTLS_CONTRACTS": "disabled",
+        "SPARKTLS_RUNTIME_CHECKS": "disabled",
+        "SPARKTLSCRYPTO_BUILD_MODE": "optimize",
+        "SPARKTLSCRYPTO_CONTRACTS": "disabled",
+        "SPARKTLSCRYPTO_RUNTIME_CHECKS": "disabled",
+        "SPARKX509_BUILD_MODE": "optimize",
+        "SPARKX509_CONTRACTS": "disabled",
+        "SPARKX509_RUNTIME_CHECKS": "disabled",
+        "SPARKMLKEM_BUILD_MODE": "optimize",
+        "SPARKMLKEM_CONTRACTS": "disabled",
+        "SPARKMLKEM_RUNTIME_CHECKS": "disabled",
+        "SPARKTLSCRYPTO_ASM": "enabled"
+      },
+      "binaries": {
+        "tls_web_epoll": "7411ea4438598d2f63dda2f6e93f8063a2c20a2c61173871b0380b6fdccf66ed",
+        "tls_bench_server": "ca0ac14c4a92d068dfca84afa6b6df84810ef68472df7521371aa7edc3a6e790"
+      }
+    },
+    "app-broad": {
+      "command": [
+        "gprbuild",
+        "-f",
+        "-s",
+        "-P",
+        "examples/sparktls_examples.gpr",
+        "-j8",
+        "tls_web_epoll.adb",
+        "tls_bench_server.adb",
+        "-cargs:Ada",
+        "-fno-tree-vrp"
+      ],
+      "environment": {
+        "SPARKENTROPY_ALIRE_PREFIX": "/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/stack/sparkentropy",
+        "SPARKMLKEM_ALIRE_PREFIX": "/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/stack/sparkmlkem",
+        "SPARKNACL_ALIRE_PREFIX": "/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/stack/sparknacl",
+        "SPARKTLSCRYPTO_ALIRE_PREFIX": "/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/stack/sparktlscrypto",
+        "SPARKTLS_ALIRE_PREFIX": "/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/stack/SPARKTLS",
+        "SPARKX509_ALIRE_PREFIX": "/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/stack/sparkx509",
+        "SPARKTLS_BUILD_MODE": "optimize",
+        "SPARKTLS_CONTRACTS": "disabled",
+        "SPARKTLS_RUNTIME_CHECKS": "disabled",
+        "SPARKTLSCRYPTO_BUILD_MODE": "optimize",
+        "SPARKTLSCRYPTO_CONTRACTS": "disabled",
+        "SPARKTLSCRYPTO_RUNTIME_CHECKS": "disabled",
+        "SPARKX509_BUILD_MODE": "optimize",
+        "SPARKX509_CONTRACTS": "disabled",
+        "SPARKX509_RUNTIME_CHECKS": "disabled",
+        "SPARKMLKEM_BUILD_MODE": "optimize",
+        "SPARKMLKEM_CONTRACTS": "disabled",
+        "SPARKMLKEM_RUNTIME_CHECKS": "disabled",
+        "SPARKTLSCRYPTO_ASM": "enabled"
+      },
+      "binaries": {
+        "tls_web_epoll": "1ccae9068f03cb5a5753462cfb6ea7874eccae302e4d350838ecd2a1b688645e",
+        "tls_bench_server": "1ec35229a67ca3d27cef9a6b73917c50ea71f3528f409be452e882d6c5dc4d35"
+      }
+    },
+    "app-fixed": {
+      "command": [
+        "gprbuild",
+        "--RTS=/home/callen/.local/share/alire/toolchains/gnat_native_16.1.0_9f74f58a/lib/gcc/x86_64-pc-linux-gnu/16.1.0",
+        "-f",
+        "-s",
+        "-P",
+        "examples/sparktls_examples.gpr",
+        "-j8",
+        "tls_web_epoll.adb",
+        "tls_bench_server.adb",
+        "-cargs:Ada",
+        "-fPIE",
+        "-B/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/compiler-fixed/",
+        "-ftree-vrp"
+      ],
+      "environment": {
+        "SPARKENTROPY_ALIRE_PREFIX": "/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/stack/sparkentropy",
+        "SPARKMLKEM_ALIRE_PREFIX": "/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/stack/sparkmlkem",
+        "SPARKNACL_ALIRE_PREFIX": "/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/stack/sparknacl",
+        "SPARKTLSCRYPTO_ALIRE_PREFIX": "/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/stack/sparktlscrypto",
+        "SPARKTLS_ALIRE_PREFIX": "/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/stack/SPARKTLS",
+        "SPARKX509_ALIRE_PREFIX": "/home/callen/work/sparktls-perf-2026-09-24/compiler-vrp-2026-09-25/stack/sparkx509",
+        "SPARKTLS_BUILD_MODE": "optimize",
+        "SPARKTLS_CONTRACTS": "disabled",
+        "SPARKTLS_RUNTIME_CHECKS": "disabled",
+        "SPARKTLSCRYPTO_BUILD_MODE": "optimize",
+        "SPARKTLSCRYPTO_CONTRACTS": "disabled",
+        "SPARKTLSCRYPTO_RUNTIME_CHECKS": "disabled",
+        "SPARKX509_BUILD_MODE": "optimize",
+        "SPARKX509_CONTRACTS": "disabled",
+        "SPARKX509_RUNTIME_CHECKS": "disabled",
+        "SPARKMLKEM_BUILD_MODE": "optimize",
+        "SPARKMLKEM_CONTRACTS": "disabled",
+        "SPARKMLKEM_RUNTIME_CHECKS": "disabled",
+        "SPARKTLSCRYPTO_ASM": "enabled"
+      },
+      "binaries": {
+        "tls_web_epoll": "b21b4c0c17bcd6b0c35aaa68539bccb9fa5dcfd3ebf73cfc43abab4754432334",
+        "tls_bench_server": "fcef00e0bd30c821694c3bf3624e942e46771f1c045b47ebfcd63ce9474b5a88"
+      }
+    }
+  },
+  "workload_start": [
+    "COMMAND         %CPU",
+    "rustc            230",
+    "nockchain        130",
+    "honk             103",
+    "roswell         99.8",
+    "rustc           97.8",
+    "rustc           97.8",
+    "rustc           97.0",
+    "rustc           96.6",
+    "rustc           95.9",
+    "rustc           95.1",
+    "rustc           93.5"
+  ]
+}

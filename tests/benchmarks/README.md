@@ -10,6 +10,8 @@ for the prepared AES-GCM results. The [follow-up report](PERFORMANCE_FOLLOWUP_20
 covers Curve25519 arithmetic and the record-copy experiment. The
 [GHASH report](PERFORMANCE_GHASH_2026-09-25.md) records the next retained kernel
 optimization and the deferred socket-buffer experiment.
+The [compiler investigation](PERFORMANCE_COMPILER_2026-09-25.md) documents the
+GNAT array-slice miscompilation, its upstream patch packet, and measured VRP cost.
 
 ## Running
 

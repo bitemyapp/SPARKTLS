@@ -1,0 +1,47 @@
+Subject: [RFC PATCH] tree-optimization: Preserve full extent of array slices
+
+An Ada array slice can access more than one element beyond its starting
+index. get_ref_base_and_extent currently applies its single-element
+range-based upper-extent formula to ARRAY_RANGE_REF as well as ARRAY_REF.
+With a four-byte slice and starting indices 0..28, IPA modref consequently
+records only 232 bits of possible writes instead of the required 256 bits.
+The caller then incorrectly reuses pre-call values of the final three bytes.
+
+Restrict this upper-extent refinement to ARRAY_REF. For ARRAY_RANGE_REF,
+retain the existing conservative extent and lower-offset refinement.
+This leaves VRP and the ordinary scalar-array optimization enabled.
+
+The attached dependency-free Ada test fails on unpatched GCC 16.1.0 at
+-O2 -gnatp and -O3 -gnatp, and passes with the patch. It was reduced from
+SPARKNaCl's SHA-256 output serialization. No cryptographic library is needed
+to reproduce it.
+
+Mainline patch base: b6e2dd90a8de756ac299c38f99418d26e74a5637
+Tested GCC 16.1 backport base: 6afcc4f6da931eb93f3ab001a0dd9650ea71d1ea
+Host/target: x86_64-pc-linux-gnu (Linux, AMD Threadripper PRO 9985WX).
+
+Testing: built stock and patched GCC 16.1 C/Ada frontends with the same
+configuration, without bootstrap. The new test passes at O1/O2/O3 with the
+patch. 11,000 SHA-256/SHA-512 digest comparisons pass at patched O2, patched
+O3, and patched checked O2; the complete SPARKNaCl testall output matches
+its golden file. Selected existing GCC regression checks also pass.
+See BUG_REPORT.md for details and the exact compiler configuration.
+
+This is an RFC with targeted validation, not a merge-qualified submission.
+The mainline patch is apply-checked against the exact base above; it has
+not had a full mainline build. A complete bootstrap and regression run of
+the required languages and runtimes is still needed before requesting merge.
+
+gcc/ChangeLog:
+
+        * tree-dfa.cc (get_ref_base_and_extent): Do not apply the
+        single-element upper-extent formula to ARRAY_RANGE_REF.
+
+gcc/testsuite/ChangeLog:
+
+        * gnat.dg/array_slice_extent.adb: New test.
+
+Background report: https://github.com/rod-chapman/SPARKNaCl/issues/37
+
+The patch contains no Bugzilla PR number because no GCC report has been
+filed from this investigation.

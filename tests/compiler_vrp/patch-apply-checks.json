@@ -1,0 +1,14 @@
+[
+  {
+    "patch": "gcc-mainline-array-slice-extent.patch",
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  {
+    "patch": "gcc-16-array-slice-extent.patch",
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+]
