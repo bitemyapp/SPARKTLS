@@ -183,6 +183,7 @@ it does not measure concurrent-client capacity.
 
 ## Latest optimization measurements
 
+- [Direct curve-table scans, mixed addition, fused AES-GCM and saturated handshake capacity](PERFORMANCE_CURVES_GCM_2026-09-25.md)
 - [Output batching and direct ciphertext sending](PERFORMANCE_OUTPUT_2026-09-25.md)
 - [Fixed-base curves and the combined comparison with OpenSSL and rustls](PERFORMANCE_FIXED_BASE_2026-09-25.md)
 
